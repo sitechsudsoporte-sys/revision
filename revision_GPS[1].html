@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Revisión de posicionamiento</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: auto;
+  }
+  h1 {
+    text-align: center;
+  }
+  fieldset {
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+  label {
+    display: block;
+    margin-top: 8px;
+  }
+  input {
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+  }
+  .cumple {
+    color: green;
+    font-weight: bold;
+  }
+  .nocumple {
+    color: red;
+    font-weight: bold;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Revisión de posicionamiento</h1>
+
+<fieldset>
+  <legend><strong>Coordenadas Máquina</strong></legend>
+  <label>Norte
+    <input type="number" step="any" id="m_norte">
+  </label>
+  <label>Este
+    <input type="number" step="any" id="m_este">
+  </label>
+  <label>Elevación
+    <input type="number" step="any" id="m_elev">
+  </label>
+</fieldset>
+
+<fieldset>
+  <legend><strong>Coordenadas GPS</strong></legend>
+  <label>Norte
+    <input type="number" step="any" id="g_norte">
+  </label>
+  <label>Este
+    <input type="number" step="any" id="g_este">
+  </label>
+  <label>Elevación
+    <input type="number" step="any" id="g_elev">
+  </label>
+</fieldset>
+
+<table>
+  <thead>
+    <tr>
+      <th>Componente</th>
+      <th>Diferencia</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Norte</td>
+      <td id="d_norte">—</td>
+      <td id="r_norte">—</td>
+    </tr>
+    <tr>
+      <td>Este</td>
+      <td id="d_este">—</td>
+      <td id="r_este">—</td>
+    </tr>
+    <tr>
+      <td>Elevación</td>
+      <td id="d_elev">—</td>
+      <td id="r_elev">—</td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+const LIMITE = 0.049;
+
+function evaluar(dif, celdaResultado) {
+  if (dif >= -LIMITE && dif <= LIMITE) {
+    celdaResultado.textContent = "Cumple";
+    celdaResultado.className = "cumple";
+  } else {
+    celdaResultado.textContent = "No cumple";
+    celdaResultado.className = "nocumple";
+  }
+}
+
+function calcular() {
+  const mn = Number(m_norte.value);
+  const me = Number(m_este.value);
+  const mz = Number(m_elev.value);
+
+  const gn = Number(g_norte.value);
+  const ge = Number(g_este.value);
+  const gz = Number(g_elev.value);
+
+  if (!isNaN(mn) && !isNaN(gn)) {
+    const d = mn - gn;
+    d_norte.textContent = d.toFixed(3);
+    evaluar(d, r_norte);
+  }
+
+  if (!isNaN(me) && !isNaN(ge)) {
+    const d = me - ge;
+    d_este.textContent = d.toFixed(3);
+    evaluar(d, r_este);
+  }
+
+  if (!isNaN(mz) && !isNaN(gz)) {
+    const d = mz - gz;
+    d_elev.textContent = d.toFixed(3);
+    evaluar(d, r_elev);
+  }
+}
+
+document.querySelectorAll("input").forEach(i =>
+  i.addEventListener("input", calcular)
+);
+</script>
+
+</body>
+</html>
